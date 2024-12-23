@@ -1,0 +1,5 @@
+langchain
+pyautogui
+requests
+opencv-python
+pillow

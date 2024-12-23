@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+transformers
+qwen-vl-utils
+pillow
+torch

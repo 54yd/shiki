@@ -1,0 +1,19 @@
+name: shiki
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pytorch
+  - torchvision
+  - pip:
+      - fastapi
+      - uvicorn
+      - transformers
+      - qwen-vl-utils
+      - pillow
+      - langchain
+      - pyautogui
+      - opencv-python
+      - requests
