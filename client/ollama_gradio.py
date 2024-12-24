@@ -14,26 +14,32 @@ def encode_image(image):
             return base64.b64encode(img_file.read()).decode("utf-8")
     except Exception as e:
         return None  # Return None if encoding fails
-
 def send_to_ollama(message, image):
     """Send a message and image to the Ollama server."""
     try:
-        # Construct the payload with the message
+        # Construct the payload with the message and stream parameter
         payload = {
             "model": MODEL_NAME,
-            "prompt": message
+            "prompt": message,
+            "stream": False  # Disable streaming for full response at once
         }
 
         # Add the image only if it exists
         if image and os.path.exists(image):
             image_b64 = encode_image(image)
             if image_b64:
-                payload["image"] = image_b64
+                payload["images"] = [image_b64]  # Add Base64 image as a list
+                print(f"Encoded Image: {image_b64[:100]}...")  # Debug first 100 characters
             else:
                 return "Error: Unable to process the image."
+        else:
+            print("No valid image provided.")
+
+        # Debug payload
+        print(f"Payload sent to server: {payload}")
 
         # Send the request to the Ollama server
-        response = requests.post(OLLAMA_URL, json=payload)
+        response = requests.post(OLLAMA_URL, json=payload, stream=False)
 
         # Debug the raw response
         print(f"Response content: {response.text}")
@@ -42,8 +48,9 @@ def send_to_ollama(message, image):
         if response.status_code == 200:
             try:
                 data = response.json()
-                return data.get("text", "No response text found.")
-            except ValueError as e:
+                # Extract the response text from the correct key
+                return data.get("response", "No response text found.")
+            except ValueError:
                 return f"Error: Server returned invalid JSON. Response: {response.text}"
         else:
             return f"Error: {response.status_code}, {response.text}"
