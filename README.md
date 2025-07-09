@@ -136,14 +136,52 @@ Inside `client/showui_gradio.py` you’ll find configurable values:
 
 ---
 
-## 📜 License & Credits
+## 🔄 Future Integration with Graham Pipeline (STILL DEVELOPMENT)
 
-- **Model weights**:  
-  – ShowUI by ShowLab ([ShowUI-2B](https://huggingface.co/showlab/ShowUI-2B))  
-  – Qwen2-VL by Qwen Team ([Qwen2-VL-2B-Instruct](https://huggingface.co/Qwen/Qwen2-VL-2B-Instruct))
+To build a complete video-to-detection workflow, Shiki can be seamlessly integrated with [Graham – Movie Auto Cutter](https://github.com/54yd/graham):
 
-- **Code**: MIT-licensed (or specify your license here)
+1. **Video to Screenshots**  
+   - Use the `graham` CLI
+2. **Automated Analysis**  
+   - Loop over generated screenshots to feed them into Shiki’s detection API:
+     ```python
+     from shiki.client.showui_gradio import predict
+
+     for img_path in screenshots:
+         coords = predict(img_path, prompt="Locate suspect")
+         print(f"{img_path}: {coords}")
+     ```
+3. **Pipeline Example**  
+   ```bash
+   # Extract frames at key moments
+   ___graham___(this cmd still in development) --video scene.mp4 --timestamps key_times.txt --output frames/
+
+   # Run Shiki on each frame
+   for img in frames/*.png; do
+     python client/showui_gradio.py --image "$img" --prompt "Find person"
+   done
+   ```
+4. **Research Collaboration**  
+   - This combined pipeline enables reproducible, end-to-end analysis—from raw video to actionable coordinates—facilitating data-driven crime scene investigations and academic benchmarking.
 
 ---
 
-Happy automating! 🚀👮‍♂️👁️
+## 🛠️ Next Steps
+
+- **REST API Wrapper**: Expose Shiki as a web service.
+- **Visualization Tools**: Overlay detection results on video timelines.
+- **Scalability**: Batch processing for large datasets or live streams.
+
+---
+
+## 📜 License & Credits
+
+- **Models**: ShowUI by ShowLab (`showlab/ShowUI-2B`), Qwen2-VL by Qwen Team (`Qwen/Qwen2-VL-2B-Instruct`)
+- **Code**: MIT License
+
+
+--- 
+
+- Happy automating! 🚀👮‍♂️👁️
+
+
